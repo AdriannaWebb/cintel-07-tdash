@@ -1,0 +1,24 @@
+/* General body styling */
+body {
+    background-color: #cbd6e2;
+    color: white; /* text color */
+  }
+
+/* Change header text to imported font */
+h2 {
+    font-weight: bold;
+  }
+
+
+.sidebar h6 {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.sidebar a:hover {
+    color: #ffc107; /* Highlight links on hover (gold) */
+}
+
+
+

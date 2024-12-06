@@ -9,6 +9,8 @@ from faicons import icon_svg # For adding icons to the dashboard
 from shiny import reactive # For reactivity and dynamic updates
 from shiny.express import input, render, ui # Core PyShiny components
 import palmerpenguins # For the penguins dataset
+from pathlib import Path #for navigating to the styles.css 
+
 
 ##########################
 #Load Data
@@ -22,8 +24,13 @@ df = palmerpenguins.load_penguins()
 #############################
 
 # Set up the main UI layout with a title and fillable sidebar
-ui.page_opts(title="Penguins Characteristics Explorer", fillable=True)
-
+ui.page_opts(
+    title=ui.tags.div(
+        "Penguins Characteristics Explorer", 
+        style="font-weight: bold; font-size: 20px;"
+    ),
+    fillable=True
+)
 # Sidebar controls for filtering and navigation
 with ui.sidebar(title="Filter controls"):
     # Slider to filter by penguin body mass
@@ -72,14 +79,14 @@ with ui.sidebar(title="Filter controls"):
 # Main layout section with value boxes and summaries
 with ui.layout_column_wrap(fill=False):
     # Display total number of penguins in the dataset
-    with ui.value_box(showcase=icon_svg("earlybirds")):
+    with ui.value_box(showcase=ui.tags.div(icon_svg("earlybirds"), style="color: #43a5be;")):
         "Total Penguins In Dataset"
         @render.text
         def count():
             return filtered_df().shape[0] # Filtered dataset count
 
     # Display average bill length
-    with ui.value_box(showcase=icon_svg("ruler-horizontal")):
+    with ui.value_box(showcase=ui.tags.div(icon_svg("ruler-horizontal"), style="color: #43a5be;")):
         "Average Bill Length (mm)"
 
         @render.text
@@ -88,7 +95,7 @@ with ui.layout_column_wrap(fill=False):
             return f"{filtered_df()['bill_length_mm'].mean():.1f} mm"
 
     # Display average bill depth
-    with ui.value_box(showcase=icon_svg("ruler-vertical")):
+    with ui.value_box(showcase=ui.tags.div(icon_svg("ruler-vertical"), style="color: #43a5be;")):
         "Average Bill Depth (mm)"
 
         @render.text
@@ -130,6 +137,8 @@ with ui.layout_columns():
 
 
 #ui.include_css(app_dir / "styles.css")
+ui.include_css(Path(__file__).parent / "styles.css")
+
 
 ##########################
 #Define the reactive calc

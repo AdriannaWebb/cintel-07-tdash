@@ -4,3 +4,4 @@ shinylive
 seaborn
 pandas
 palmerpenguins
+pathlib
