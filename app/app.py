@@ -1,25 +1,47 @@
-import seaborn as sns
-from faicons import icon_svg
+##########################
+#Imports
+##########################
 
-from shiny import reactive
-from shiny.express import input, render, ui
-import palmerpenguins 
+# Import necessary libraries
+import seaborn as sns # For creating visualizations
+from faicons import icon_svg # For adding icons to the dashboard
 
+from shiny import reactive # For reactivity and dynamic updates
+from shiny.express import input, render, ui # Core PyShiny components
+import palmerpenguins # For the penguins dataset
+
+##########################
+#Load Data
+##########################
+
+# Load the Palmer Penguins dataset
 df = palmerpenguins.load_penguins()
 
+#############################
+#Define the Shiney Express UI
+#############################
+
+# Set up the main UI layout with a title and fillable sidebar
 ui.page_opts(title="Penguins Characteristics Explorer", fillable=True)
 
-
+# Sidebar controls for filtering and navigation
 with ui.sidebar(title="Filter controls"):
+    # Slider to filter by penguin body mass
     ui.input_slider("mass", "Mass (g)", 2000, 6000, 6000)
+    
+    # Checkbox group to filter by penguin species
     ui.input_checkbox_group(
         "species",
         "Filter by Species",
         ["Adelie", "Gentoo", "Chinstrap"],
         selected=["Adelie", "Gentoo", "Chinstrap"],
     )
+
+    # Horizontal line for visual separation
     ui.hr()
     ui.h6("Source Links")
+
+    # Links to helpful resources and source code
     ui.a(
         "GitHub Source",
         href="https://github.com/denisecase/cintel-07-tdash",
@@ -47,36 +69,42 @@ with ui.sidebar(title="Filter controls"):
         target="_blank",
     )
 
-
+# Main layout section with value boxes and summaries
 with ui.layout_column_wrap(fill=False):
+    # Display total number of penguins in the dataset
     with ui.value_box(showcase=icon_svg("earlybirds")):
         "Total Penguins In Dataset"
-
         @render.text
         def count():
-            return filtered_df().shape[0]
+            return filtered_df().shape[0] # Filtered dataset count
 
+    # Display average bill length
     with ui.value_box(showcase=icon_svg("ruler-horizontal")):
         "Average Bill Length (mm)"
 
         @render.text
         def bill_length():
+            # Calculate the mean bill length
             return f"{filtered_df()['bill_length_mm'].mean():.1f} mm"
 
+    # Display average bill depth
     with ui.value_box(showcase=icon_svg("ruler-vertical")):
         "Average Bill Depth (mm)"
 
         @render.text
         def bill_depth():
+            # Calculate the mean bill depth
             return f"{filtered_df()['bill_depth_mm'].mean():.1f} mm"
 
-
+# Layout section for visualizations and dataset preview
 with ui.layout_columns():
+    # Scatter plot of bill length vs bill depth
     with ui.card(full_screen=True):
         ui.card_header("Bill Length vs. Bill Depth by Species")
 
         @render.plot
         def length_depth():
+            # Scatter plot with seaborn
             return sns.scatterplot(
                 data=filtered_df(),
                 x="bill_length_mm",
@@ -84,11 +112,13 @@ with ui.layout_columns():
                 hue="species",
             )
 
+    # Data table preview of the penguin dataset
     with ui.card(full_screen=True):
         ui.card_header("Penguin Dataset Preview")
 
         @render.data_frame
         def summary_statistics():
+            # Select columns to display in the data table
             cols = [
                 "species",
                 "island",
@@ -101,7 +131,11 @@ with ui.layout_columns():
 
 #ui.include_css(app_dir / "styles.css")
 
+##########################
+#Define the reactive calc
+##########################
 
+# Reactive function to filter the dataset based on user inputs
 @reactive.calc
 def filtered_df():
     filt_df = df[df["species"].isin(input.species())]
