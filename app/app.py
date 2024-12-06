@@ -10,6 +10,7 @@ from shiny import reactive # For reactivity and dynamic updates
 from shiny.express import input, render, ui # Core PyShiny components
 import palmerpenguins # For the penguins dataset
 from pathlib import Path #for navigating to the styles.css 
+import shinyswatch #theme
 
 
 ##########################
@@ -29,7 +30,8 @@ ui.page_opts(
         "Penguins Characteristics Explorer", 
         style="font-weight: bold; font-size: 20px;"
     ),
-    fillable=True
+    fillable=True,
+    theme=shinyswatch.theme.darkly 
 )
 # Sidebar controls for filtering and navigation
 with ui.sidebar(title="Filter controls"):
